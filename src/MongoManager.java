@@ -1,14 +1,16 @@
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Projections;
-import jdk.jshell.spi.ExecutionControl;
+import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import javax.print.Doc;
 import java.sql.Blob;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -17,7 +19,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class MongoManager {
 
-    private final String CONNECTION_STRING = "mongodb+srv://7071a6:Manchester@cluster0.rysojag.mongodb.net/?retryWrites=true&w=majority";
+    private final String CONNECTION_STRING = "mongodb+srv://7071a6:<Password>@cluster0.rysojag.mongodb.net/?retryWrites=true&w=majority";
     private final String DB_NAME = "7071a6";
     private final Bson projectionFields = Projections.fields(Projections.include("_id", "Name"));
     private MongoClient client;
@@ -145,12 +147,22 @@ public class MongoManager {
         return customerServiceScheduleCollection.insertOne(newCustomerServiceScheduleRecord).getInsertedId().toString();
     }
 
-    public String updateEmployeeName(String oldName, String newName) {
-        //todo
-        MongoCollection<Document> employeeCollection = db.getCollection(Table.Employee.tableName());
-        Document employeeToUpdate = employeeCollection.find(eq(Employee.Name.fieldName(), oldName)).projection(projectionFields).first();
+    public long updateEmployeeName(String oldName, String newName) {
 
-        return null;
+        MongoCollection<Document> employeeCollection = db.getCollection(Table.Employee.tableName());
+        UpdateResult result = null;
+
+        Document query = new Document().append(Employee.Name.fieldName(), oldName);
+        Bson updates = Updates.combine(Updates.set(Employee.Name.fieldName(), newName));
+        UpdateOptions options = new UpdateOptions().upsert(true);
+
+        try {
+            result = employeeCollection.updateOne(query, updates, options);
+        } catch (MongoException ex) {
+            System.out.println("Unable to update customer " + oldName);
+        }
+
+        return result.getModifiedCount();
     }
 
     public long dropEmployee(String employeeName) {

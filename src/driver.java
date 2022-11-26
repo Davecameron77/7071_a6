@@ -43,6 +43,20 @@ public class driver {
 
             // Add some customer service
 
+            // Update an employee
+            System.out.println();
+            System.out.println("*********************************************");
+            System.out.println("Updating Emp Three");
+            double modifiedRecords = manager.updateEmployeeName("Emp Three", "DeleteMe");
+            System.out.println("Modified " + modifiedRecords + " records");
+
+            // Drop an employee
+            System.out.println();
+            System.out.println("*********************************************");
+            System.out.println("Dropping Emp Three");
+            long deletedRecords = manager.dropEmployee("DeleteMe");
+            System.out.println("Deleted " + deletedRecords + " records");
+
             System.out.println("*********************************************");
             System.out.println("Transactions Complete, disconnecting");
             manager.disconnect();
