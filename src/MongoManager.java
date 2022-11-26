@@ -17,7 +17,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class MongoManager {
 
-    private final String CONNECTION_STRING = "mongodb+srv://7071a6:Manchester@cluster0.rysojag.mongodb.net/?retryWrites=true&w=majority";
+    private final String CONNECTION_STRING = "mongodb+srv://7071a6:<password>@cluster0.rysojag.mongodb.net/?retryWrites=true&w=majority";
     private final String DB_NAME = "7071a6";
     private final Bson projectionFields = Projections.fields(Projections.include("_id", "Name"));
     private MongoClient client;
